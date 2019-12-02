@@ -1,8 +1,8 @@
 # shellscript
-Treinamento Shell Script na 4 Linux com **Julio Cezar Neves**
+Treinamento Shell Script na 4 Linux com _**Julio Cezar Neves**_
 
 ## Preparando para a Aula
-mkdir /home/diurno/shell
+mkdir /home/diurno/shell \
 tar xzvf /home/repositorio/EXTRAS/404/ArqsDoCursoShell /home/diurno/shell
 
 
@@ -35,6 +35,7 @@ Acoes do shell
 1-Redirecionador
 2-Substituicao de chaves
 3-Substituicao de variaveis
+4-Resolucao de Curingas
 
 
 ### Redirecionadores
@@ -110,6 +111,33 @@ diurno@tux06:~/shell$ mail meu@amor.com 0< mala
 Acrescenta ao inves de substituir
 
 
+#### `<<`
+```
+diurno@tux06:~/shell/lixo$ var=5
+diurno@tux06:~/shell/lixo$ python << fim
+> print $var
+> fim
+5
+diurno@tux06:~/shell/lixo$ var=julio
+diurno@tux06:~/shell/lixo$ python << fim
+print $var
+fim
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'julio' is not defined
+diurno@tux06:~/shell/lixo$ python << fim
+print "$var"
+fim
+julio
+diurno@tux06:~/shell/lixo$ 
+```
+
+#### Pipe `|`
+Saida primaria de um comando para saida do outro
+```
+
+```
+
 
 ### Substituicao de chaves
 ```
@@ -146,6 +174,7 @@ diurno@tux06:~/shell$ eval echo {$var..3}
 diurno@tux06:~/shell$
 ```
 
+### Resolucao de Curingas
 > Nunca deixe caracteres coringas para o shell (*,?,)
 ```
 diurno@tux06:~/shell$ mkdir lixo
@@ -221,11 +250,16 @@ diurno@tux06:~/shell/lixo$
 ```
 
 
-
 ### 
 ```
 
 ```
+
+
+
+
+
+
 ### 
 ```
 
