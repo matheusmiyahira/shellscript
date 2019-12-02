@@ -425,7 +425,7 @@ xbxcxxi
 diurno@tux06:~/shell/lixo$ tr a x <<< abacaxi
 xbxcxxi
 diurno@tux06:~/shell/lixo$ 
-
+```
 > Cuidao com as variaveis na criacao do subshell (o pipe cria uma subshell), pois as variaveis do shell serao enviadas ao subshell, porem as variaveis do subshell nao serao enviadas ao shell.
 ```
 diurno@tux06:~/shell/lixo$ a=3; (echo 1$a;a=5;echo 2$a); echo 3$a
@@ -439,15 +439,7 @@ diurno@tux06:~/shell/lixo$ a=3; (echo 1$a;a=5;b=x;echo 2$a); echo 3$a; echo $b
 33
 
 diurno@tux06:~/shell/lixo$ 
-
 ```
-
-```
-```
-
-```
-```
-
 
 
 ### Substituicao de chaves
@@ -562,9 +554,138 @@ diurno@tux06:~/shell/lixo$
 
 
 
+## Expressao Regurar
+grep --> global regular expression print \
+grep -E --> grep para expressoes regulares expandidas (ex. ?, {}, etc)
+grep -v palavra --> exclui palavra
+grep -v ^$ --> exclui linha em branco, que comeca e termina
+grep -o --> --only-match
+
+### Classe POSIX
+```
+diurno@tux06:~/shell/lixo$ grep -o '[[:lower:]]' <<< ação
+a
+ç
+ã
+o
+diurno@tux06:~/shell/lixo$ grep -o '[a-z]' <<< ação
+a
+ç
+ã
+o
+diurno@tux06:~/shell/lixo$ echo $LANG
+pt_BR.UTF-8
+diurno@tux06:~/shell/lixo$ LANG=C grep -o '[a-z]' <<< ação
+a
+o
+diurno@tux06:~/shell/lixo$ 
+
+```
+### Escape
+`\s` casa espacos em branco \
 
 
+`\S` é negacao do `\s`. Casa o que nao for espaco em branco \
+`\w` casa letras, dígitos , ou \'\_\' \
+`\W` negacao do \w \
+`\d` casa numeros \
+`\D` negacao `\d` 
 
+### Borda
+`\b` casa com \[A-Za-z0-9_] \
+`\B` nao casa com \[A-Za-z0-9_] \
+`\< >\` casa com \[A-Za-z0-9_]
+
+`\bave\b` ave, acestruz, ave-do-paraiso, ~~trave~~ \
+`\<ave>\` ave, acestruz, ave-do-paraiso, ~~trave~~
+
+
+### Outros Metacaracteres
+**Escape (`\`)** \
+--> CEP `[0-9]{2}\.[0-9]{3}-[0-9]{2}` ou `[0-9]{2}[.][0-9]{3}-[0-9]{2}` \
+**Ou (`|`)** \
+--> boa-(tarde|noite) --> casa com boa-tarde, boa-noite \
+**Grupo** \
+--> (meta)?caractere --> casa com caractere, metacaractere \
+--> (mini|(su|hi)per)?mercado --> casa com mercado, supermercado, hipermercado, minimercado \
+**Retrovisor ou _Back-reference_** \
+--> (lenta)(mente) é \2 \1  lentamente é mente lenta \
+--> ((band)eira)nte \1 \2a  bandeirante bandeira banda \
+--> in(d)ol(or) é sem \1\2  indolor é sem dor \
+--> ((((a)b)c)d)-1 = \1,\2,\3,\4    abcd-1 = abcd,abc,ab,a \
+conte somente os parênteses que abrem, da esquerda para a direita. \
+```
+diurno@tux06:~/shell/lixo$ cat ../quero
+batebate
+bate-bate
+bate-bateria
+bole--bole
+comecome
+come come
+come  come
+come-come
+hoje-joia
+queroquero
+quero quero
+quero-quero
+rebate-bate
+rebate-bateria
+diurno@tux06:~/shell/lixo$ grep -E '([a-z]+)-\1' ../quero
+bate-bate
+bate-bateria
+come-come
+quero-quero
+rebate-bate
+rebate-bateria
+diurno@tux06:~/shell/lixo$ grep -E '^([a-z]+)-\1$' ../quero
+bate-bate
+come-come
+quero-quero
+diurno@tux06:~/shell/lixo$ grep -E '\b([a-z]+)-\1\b' ../quero
+bate-bate
+come-come
+quero-quero
+diurno@tux06:~/shell/lixo$ 
+diurno@tux06:~/shell/lixo$ grep -E '\b([a-z]+)( |-)\1\b' ../quero
+bate-bate
+come come
+come-come
+quero quero
+quero-quero
+diurno@tux06:~/shell/lixo$ grep -E '\b([a-z]+)[ -]\1\b' ../quero
+bate-bate
+come come
+come-come
+quero quero
+quero-quero
+diurno@tux06:~/shell/lixo$ 
+diurno@tux06:~/shell/lixo$ grep -E '\b([a-z]+)[ -]?\1\b' ../quero
+batebate
+bate-bate
+comecome
+come come
+come-come
+queroquero
+quero quero
+quero-quero
+diurno@tux06:~/shell/lixo$ 
+```
+### Dates
+```
+diurno@tux06:~/shell/lixo$ Hoje=$(date '+%d/%m/%Y')
+diurno@tux06:~/shell/lixo$ echo $(Hoje)
+bash: Hoje: comando não encontrado
+
+diurno@tux06:~/shell/lixo$ echo $Hoje
+02/12/2019
+diurno@tux06:~/shell/lixo$ echo $hoje
+
+diurno@tux06:~/shell/lixo$ 
+diurno@tux06:~/shell/lixo$ sed -r 's|([0-9]{2})/([0-9]{2})/([0-9]{4})|\3-\2-\1|' <<< $Hoje
+2019-12-02
+diurno@tux06:~/shell/lixo$ 
+```
+> sed -r --> expandir o sed
 
 
 ### 
