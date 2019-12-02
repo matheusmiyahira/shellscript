@@ -694,7 +694,7 @@ diurno@tux06:~/shell/lixo$
 
 
 ## Novos Comandos
-`Ctr+R` --> (reverse-i-search)
+Bash `Ctr+R` --> (reverse-i-search)
 
 
 
