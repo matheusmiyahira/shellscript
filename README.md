@@ -1,5 +1,5 @@
 # shellscript
-Treinamento Shell Script na 4 Linux com *Julia Cezar Neves*
+Treinamento Shell Script na 4 Linux com **Julio Cezar Neves**
 
 ## Preparando para a Aula
 mkdir /home/diurno/shell
@@ -8,7 +8,7 @@ tar xzvf /home/repositorio/EXTRAS/404/ArqsDoCursoShell /home/diurno/shell
 
 ## Variaveis
 
-´´´
+```
 diurno@tux06:~/shell$ var = 5
 bash: var: comando não encontrado
 diurno@tux06:~/shell$ var=5
@@ -27,8 +27,7 @@ diurno@tux06:~/shell$ ls xxx 2>&-
 diurno@tux06:~/shell$ 
 diurno@tux06:~/shell$ 
 diurno@tux06:~/shell$ 
-
-´´´
+```
 
 ## Iniciando
 Acoes do shell
@@ -39,10 +38,10 @@ Acoes do shell
 
 
 ### Redirecionadores
-#### ´>´ ou ´1>´
-> ´>´ muito mais rápido que ´touch´
+#### `>` ou `1>`
+> `>` muito mais rápido que `touch`
 
-´´´
+```
 diurno@tux06:~/shell$ time for ((i=1;i>200;i++))
 > touch arq200
 bash: erro de sintaxe próximo ao token inesperado `touch'
@@ -73,11 +72,11 @@ user	0m0,001s
 sys	0m0,006s
 diurno@tux06:~/shell$ 
 
-´´´
+```
 
 > 'cat' short for contatenate
 cat vai redirecionar primeiro e apagar o arquivo
-´´´
+```
 diurno@tux06:~/shell$ 
 diurno@tux06:~/shell$ echo uma linha > arq200
 diurno@tux06:~/shell$ 
@@ -88,11 +87,11 @@ uma linha
 diurno@tux06:~/shell$ cat arq200 > arq200
 diurno@tux06:~/shell$ cat arq200
 diurno@tux06:~/shell$ 
-´´´
+```
 
-#### ´<´ ou ´1<´
-Antes de usar ´|´ tente usar ´<´, pois o ´|´ cria subshells
-´´´
+#### `<` ou `1<`
+Antes de usar `|` tente usar `<`, pois o `|` cria subshells
+```
 diurno@tux06:~/shell$ 
 diurno@tux06:~/shell$ wc -l add
 7 add
@@ -102,19 +101,18 @@ diurno@tux06:~/shell$ cat add | wc -l
 diurno@tux06:~/shell$ wc -l < add
 7
 diurno@tux06:~/shell$ 
-´´´
-´´´
+```
+```
 diurno@tux06:~/shell$ mail meu@amor.com 0< mala
+```
 
-´´´
-
-#### ´>>´ ou ´1>>´
+#### `>>` ou `1>>`
 Acrescenta ao inves de substituir
 
 
 
 ### Substituicao de chaves
-´´´
+```
 diurno@tux06:~/shell$ echo {19..3}
 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3
 diurno@tux06:~/shell$ echo {19..03}
@@ -129,15 +127,15 @@ diurno@tux06:~/shell$ echo pe{itu,la,ga}da
 peituda pelada pegada
 diurno@tux06:~/shell$ 
 
-´´´
-Crianto tres pastas 1, 2 e 3 --> ´diurno@tux06:~/shell$ mkdir /home/{1,2,3}´
+```
+Crianto tres pastas 1, 2 e 3 --> `diurno@tux06:~/shell$ mkdir /home/{1,2,3}`
 
 
 
 ### Substituicao de variaveis
 
-Neste exemplo abaixo o shell substituiu as chaves antes de substituir a variavel. Para consertar a operacao usa-se ´eval´.
-´´´
+Neste exemplo abaixo o shell substituiu as chaves antes de substituir a variavel. Para consertar a operacao usa-se `eval`.
+```
 diurno@tux06:~/shell$ var=19
 diurno@tux06:~/shell$ echo {$var..3}
 {19..3}
@@ -145,12 +143,11 @@ diurno@tux06:~/shell$
 diurno@tux06:~/shell$ 
 diurno@tux06:~/shell$ eval echo {$var..3}
 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3
-diurno@tux06:~/shell$ 
-
-´´´
+diurno@tux06:~/shell$
+```
 
 > Nunca deixe caracteres coringas para o shell (*,?,)
-´´´
+```
 diurno@tux06:~/shell$ mkdir lixo
 diurno@tux06:~/shell$ cd lixo
 diurno@tux06:~/shell/lixo$ touch arq{1..12}
@@ -208,32 +205,31 @@ diurno@tux06:~/shell/lixo$ ls arq? | wc -l
 diurno@tux06:~/shell/lixo$ ls arq?
 arq1  arq2  arq3  arq4  arq5  arq6  arq7  arq8  arq9
 diurno@tux06:~/shell/lixo$ 
-´´´
+```
 O exemplo abaixo mostrara somente o aquivo 1. Pois nao existe de 3 a 1, restando somente o 1.
-´´´
+```
 diurno@tux06:~/shell/lixo$ 
 diurno@tux06:~/shell/lixo$ ls arq[3-11]
 arq1
 diurno@tux06:~/shell/lixo$ 
-´´´
+```
 Outro exemplo.
-´´´
+```
 diurno@tux06:~/shell/lixo$ ls arq[!357]?
 arq10  arq11  arq12
 diurno@tux06:~/shell/lixo$ 
-
-´´´
+```
 
 
 
 ### 
-´´´
+```
 
-´´´
+```
 ### 
-´´´
+```
 
-´´´
+```
 
 
 
