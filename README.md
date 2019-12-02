@@ -688,13 +688,8 @@ diurno@tux06:~/shell/lixo$
 > sed -r --> expandir o sed
 
 
-### 
-```
-
-```
-
-
-
+### Regex Cross­word
+[https://regexcrossword.com/](https://regexcrossword.com/)
 
 
 
