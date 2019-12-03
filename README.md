@@ -1292,4 +1292,679 @@ diurno@tux06:~/shell$ paste <(seq 6) frutas
 diurno@tux06:~/shell$ 
 ```
 
+### `sed - i` --> 
+-i[SUFIXO], --in-place[=SUFIXO]
+                 edita o arquivo original (faz backup se usado SUFIXO)
+
+> O comando `$ sed -i.veio 's/[[:upper:]]/[[:lower:]]/g' quequeisso` #esta incorreto, pois a sintaxe do `sed` e O s/REGEX/STR/
+```
+diurno@tux06:~/shell$ sed -i.veio 's/[[:upper:]]/[[:lower:]]/g' quequeisso
+diurno@tux06:~/shell$ cat quequeisso
+[[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]], [[:lower:]] [[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]] [[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]] [[:lower:]][[:lower:]][[:lower:]] [[:lower:]][[:lower:]] [[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]],
+[[:lower:]][[:lower:]] [[:lower:]][[:lower:]][[:lower:]] [[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]] [[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]][[:lower:]]!!!
+[[:lower:]] [[:lower:]]hell alem de analisar cada dado entrado a partir do prompt do [[:lower:]][[:lower:]][[:lower:]][[:lower:]],
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+[[:lower:]]nterpretador de comandos;
+[[:lower:]]ontrole do ambiente [[:lower:]][[:lower:]][[:lower:]][[:lower:]];
+[[:lower:]]edirecionamento de entrada e saida;
+[[:lower:]]ubstituicao de nomes de arquivos;
+[[:lower:]]oncatenacao de pipe;
+[[:lower:]]xecucao de programas;
+[[:lower:]]oderosa linguagem de programacao.
+diurno@tux06:~/shell$ cat quequeisso.veio
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+O Shell alem de analisar cada dado entrado a partir do prompt do UNIX,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+Interpretador de comandos;
+Controle do ambiente UNIX;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ mv quequeisso.veio quequeisso
+```
+
+### `sed 's/ /\L&/' arquivo` --> retrovisor com &
+Uso muito restrito
+```
+diurno@tux06:~/shell$ sed 's/.*/\L&/' quequeisso
+atencao, o texto abaixo nao eh treinamento,
+eh uma lavagem cerebral!!!
+o shell alem de analisar cada dado entrado a partir do prompt do unix,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+interpretador de comandos;
+controle do ambiente unix;
+redirecionamento de entrada e saida;
+substituicao de nomes de arquivos;
+concatenacao de pipe;
+execucao de programas;
+poderosa linguagem de programacao.
+diurno@tux06:~/shell$ sed 's/UNIX/\L&/' quequeisso
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+O Shell alem de analisar cada dado entrado a partir do prompt do unix,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+Interpretador de comandos;
+Controle do ambiente unix;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ sed -r 's/[0-9]{2}/&12/' <<< 15/05/1024
+1512/05/1024
+diurno@tux06:~/shell$ sed -r 's/[0-9]{2}/&12/g' <<< 15/05/1024
+1512/0512/10122412
+diurno@tux06:~/shell$ sed 's/[0-9]{2}/&12/g' <<< 15/05/1024
+15/05/1024
+diurno@tux06:~/shell$ sed 's/[0-9]\{2\}/&12/g' <<< 15/05/1024
+1512/0512/10122412
+diurno@tux06:~/shell$ 
+```
+
+### `sed 'y/ / /' arquivo`
+Como o `s/ / /` porem literalmente, sintaxe y/STR/STR/
+```
+diurno@tux06:~/shell$ sed 'y/aeiou/xyzwk/' quequeisso
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+O Shyll xlym dy xnxlzsxr cxdx dxdw yntrxdw x pxrtzr dw prwmpt dw UNIX,
+zntyrfxcyxndw cwm ws kskxrzws, tym txmbym xs sygkzntys xtrzbkzcwys:
+Intyrprytxdwr dy cwmxndws;
+Cwntrwly dw xmbzynty UNIX;
+Rydzryczwnxmyntw dy yntrxdx y sxzdx;
+Skbstztkzcxw dy nwmys dy xrqkzvws;
+Cwncxtynxcxw dy pzpy;
+Exyckcxw dy prwgrxmxs;
+Pwdyrwsx lzngkxgym dy prwgrxmxcxw.
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ sed 'y/OIZEASGTB/012345678/' quequeisso
+473NC40, 0 73X70 4841X0 N40 3H 7R31N4M3N70,
+3H UM4 L4V463M C3R38R4L!!!
+0 5hell alem de analisar cada dado entrado a partir do prompt do UN1X,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+1nterpretador de comandos;
+Controle do ambiente UN1X;
+Redirecionamento de entrada e saida;
+5ubstituicao de nomes de arquivos;
+Concatenacao de pipe;
+3xecucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ sed 'y/\cm/ / DOS.txt | car -et
+> ^C
+diurno@tux06:~/shell$ sed 'y/\cm/ /' DOS.txt | car -et
+bash: car: comando não encontrado
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ sed 'y/\cm/ /' DOS.txt | cat -et
+Este arquivo $
+foi gerado pelo $
+DOS/rwin e foi $
+baixado por um $
+ftp mal feito. $
+diurno@tux06:~/shell$ sed 'y/\cM/ /' DOS.txt | cat -et
+Este arquivo $
+foi gerado pelo $
+DOS/rwin e foi $
+baixado por um $
+ftp mal feito. $
+diurno@tux06:~/shell$ 
+```
+
+
+
+## `cut`
+```
+diurno@tux06:~/shell$ who -l
+LOGIN    tty1         2019-12-02 09:29               564 id=tty1
+diurno@tux06:~/shell$ who -l | cut -c -8
+LOGIN   
+diurno@tux06:~/shell$ who -l | cut -c1-8
+LOGIN   
+diurno@tux06:~/shell$ who -l | cut -c -8, 40-60
+cut: posições de byte/caractere são numeradas a partir do número 1
+Tente "cut --help" para mais informações.
+diurno@tux06:~/shell$ who -l | cut -c -8,40-60
+LOGIN                 564 id=
+diurno@tux06:~/shell$ who -l | cut -c -8,20-40
+LOGIN      2019-12-02 09:29  
+diurno@tux06:~/shell$ who -l | cut -c -8,20-40,60-
+LOGIN      2019-12-02 09:29  =tty1
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ who -l | cut -f1 -d' '
+LOGIN
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ cut -f1 telefones
+Ciro Grippi
+Claudia Marcia
+Enio Cardoso
+Juliana Duarte
+Luiz Carlos
+Ney Garrafas
+Ney Gerhardt
+Paula Duarte
+diurno@tux06:~/shell$ cat -et telefones
+Ciro Grippi^I(021)555-1234$
+Claudia Marcia^I(021)555-2112$
+Enio Cardoso^I(023)232-3423$
+Juliana Duarte^I(024)622-2876$
+Luiz Carlos^I(021)767-2124$
+Ney Garrafas^I(021)988-3398$
+Ney Gerhardt^I(024)543-4321$
+Paula Duarte^I(011)449-0219$
+diurno@tux06:~/shell$ cat quequeisso ^C
+diurno@tux06:~/shell$ 
+
+```
+
+
+
+## `cut | sort | uniq`
+```
+diurno@tux06:~/shell$ ls | cut -f2- -d.
+yad
+add
+alfa
+aluado
+sh
+sh
+aniv
+sh
+Arq
+arq200
+DOS
+arqip
+arqip1
+ArqOLs
+sh
+sh
+ave
+bb
+bdb
+txt
+bronze
+c3e1
+c3e2
+c3e3
+c4e1
+c4e2
+c4e3
+c5e1
+c6e1
+c6e2
+c7e1
+c7e2
+1
+c8e1
+c8e2
+camba
+pdf
+carros
+sh
+sh
+sh
+confusao
+awk
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+creditos
+sed
+sh
+d
+debitos
+sed
+sh
+div
+txt
+func
+DuLoren
+empregado
+erreeme
+exclui
+awk
+for.awk
+frutas
+funcionario
+funcionarios
+func
+sh
+grepr
+yad
+yad
+hora
+awk
+sed
+kadeo
+sh
+lematric
+awk
+listdir
+listdir1
+lixo
+lt
+sh
+medieval
+misto
+sh
+sh
+sh
+sh
+sh
+sh
+nautilus-scripts
+sh
+txt
+yad
+nums
+sh
+sh
+pdf
+sh
+param1
+param2
+param3
+param4
+param5
+param6
+param7
+tmp
+pedi
+pp
+awk
+txt
+quequeisso
+quero
+pdf
+sh
+rem
+restaura
+sh
+awk
+sh
+talogado
+tavazio
+sh
+telef
+telefones
+teles
+sh
+testa_sed
+testchar
+teste
+testsex
+sh
+toca
+tputcup
+tr
+sh
+tst_exec
+tstmatr
+sh
+usus
+variando
+variando1
+VelEcon
+sh
+vira
+diurno@tux06:~/shell$ ls | cut -f2- -sd.
+yad
+sh
+sh
+sh
+DOS
+sh
+sh
+txt
+1
+pdf
+sh
+sh
+sh
+awk
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sed
+sh
+sed
+sh
+txt
+func
+awk
+for.awk
+func
+sh
+yad
+yad
+awk
+sed
+sh
+awk
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+txt
+yad
+sh
+sh
+pdf
+sh
+tmp
+awk
+txt
+pdf
+sh
+sh
+awk
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ ls | cut -f2- -sd. | sort
+1
+awk
+awk
+awk
+awk
+awk
+awk
+DOS
+for.awk
+func
+func
+pdf
+pdf
+pdf
+sed
+sed
+sed
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+sh
+tmp
+txt
+txt
+txt
+txt
+yad
+yad
+yad
+yad
+diurno@tux06:~/shell$ ls | cut -f2- -sd. | sort | UNIQ
+bash: UNIQ: comando não encontrado
+diurno@tux06:~/shell$ ls | cut -f2- -sd. | sort | uniq
+1
+awk
+DOS
+for.awk
+func
+pdf
+sed
+sh
+tmp
+txt
+yad
+diurno@tux06:~/shell$ ls | cut -f2- -sd. | sort | uniq -C
+uniq: opção inválida -- “C”
+Tente "uniq --help" para mais informações.
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ ls | cut -f2- -sd. | sort | uniq -c
+      1 1
+      6 awk
+      1 DOS
+      1 for.awk
+      2 func
+      3 pdf
+      3 sed
+     39 sh
+      1 tmp
+      4 txt
+      4 yad
+diurno@tux06:~/shell$ 
+
+```
+
+
+```
+diurno@tux06:~/shell$ cut -f2 -d\( telefones
+021)555-1234
+021)555-2112
+023)232-3423
+024)622-2876
+021)767-2124
+021)988-3398
+024)543-4321
+011)449-0219
+diurno@tux06:~/shell$ cut -f2 -d\( | cut -f1 -d\) telefones
+Ciro Grippi	(021
+Claudia Marcia	(021
+Enio Cardoso	(023
+Juliana Duarte	(024
+Luiz Carlos	(021
+Ney Garrafas	(021
+Ney Gerhardt	(024
+Paula Duarte	(011
+^[[A^C
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ cut -f2 -d\( telefones | cut -f1 -d\)
+021
+021
+023
+024
+021
+021
+024
+011
+diurno@tux06:~/shell$ cut -f2 -d\( telefones | cut -f2 -d\-
+1234
+2112
+3423
+2876
+2124
+3398
+4321
+0219
+diurno@tux06:~/shell$ cut -f2 -d\( telefones | cut -f1 -d\-
+021)555
+021)555
+023)232
+024)622
+021)767
+021)988
+024)543
+011)449
+diurno@tux06:~/shell$ cut -f2 -d\( telefones | cut -f1 -d\-
+021)555
+021)555
+023)232
+024)622
+021)767
+021)988
+024)543
+011)449
+diurno@tux06:~/shell$ cut -f2 -d\) telefones | cut -f1 -d\-
+555
+555
+232
+622
+767
+988
+543
+449
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ cut -f2 -d' ' telefones | cut -f1
+Grippi
+Marcia
+Cardoso
+Duarte
+Carlos
+Garrafas
+Gerhardt
+Duarte
+diurno@tux06:~/shell$ 
+```
+
+> Crtl+V + Tab
+> ```
+> diurno@tux06:~/shell$ echo "    " | cat -et
+> ^I$
+> diurno@tux06:~/shell$ 
+> ```
+
+### Outros `cut`
+```
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ seq -s: 10
+1:2:3:4:5:6:7:8:9:10
+diurno@tux06:~/shell$ seq -s: 10 | cut -f4-7 -d:
+4:5:6:7
+diurno@tux06:~/shell$ seq -s: 10 | cut -f4-7 -d: --complement
+1:2:3:8:9:10
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ seq -s: 10 | cut -f4-7 -d: --complement --output-delimiter $'\n'
+1
+2
+3
+8
+9
+10
+diurno@tux06:~/shell$ seq -s: 10 | cut -f4-7 -d: --complement --output-delimiter $' sep '
+1 sep 2 sep 3 sep 8 sep 9 sep 10
+diurno@tux06:~/shell$ 
+
+```
+
+## `past`
+###
+```
+diurno@tux06:~/shell$ seq 1 2 9 > impar
+diurno@tux06:~/shell$ seq 2 2 10 > par
+diurno@tux06:~/shell$ paste impar par
+1	2
+3	4
+5	6
+7	8
+9	10
+diurno@tux06:~/shell$ paste impar par > nums
+```
+### `paste -d`
+```
+diurno@tux06:~/shell$ paste impar par -d+
+1+2
+3+4
+5+6
+7+8
+9+10
+diurno@tux06:~/shell$ paste impar par -d+ | bc
+bash: bc: comando não encontrado
+diurno@tux06:~/shell$ 
+
+``` 
+### `paste -s`
+-s, --serial            cola um arquivo por vez em de todos em paralelo
+
+```
+diurno@tux06:~/shell$ paste par
+2
+4
+6
+8
+10
+diurno@tux06:~/shell$ paste -s par
+2	4	6	8	10
+diurno@tux06:~/shell$
+```
+
+### `paste -d`
+
+```
+diurno@tux06:~/shell$ seq 6
+1
+2
+3
+4
+5
+6
+diurno@tux06:~/shell$ seq 6 | paste -sd*
+1*2*3*4*5*6
+diurno@tux06:~/shell$ echo $(($(seq 6 | paste -sd*)))
+720
+diurno@tux06:~/shell$ 
+```
+Nao se deixa metacaracter `*` para o shell, pois acontece isso
+```
+diurno@tux06:~/shell$ seq -s* 6
+1*2*3*4*5*6
+diurno@tux06:~/shell$ > -sifu
+diurno@tux06:~/shell$ seq -s* 6
+1ifu2ifu3ifu4ifu5ifu6
+diurno@tux06:~/shell$ seq -s* 6
+1ifu2ifu3ifu4ifu5ifu6
+diurno@tux06:~/shell$ 
+
+```
+
 
