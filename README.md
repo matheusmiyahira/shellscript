@@ -1964,7 +1964,271 @@ diurno@tux06:~/shell$ seq -s* 6
 diurno@tux06:~/shell$ seq -s* 6
 1ifu2ifu3ifu4ifu5ifu6
 diurno@tux06:~/shell$ 
-
+diurno@tux06:~/shell$ rm -sifu
+rm: opção inválida -- “s”
+Tente "rm ./-sifu" para remover o arquivo '-sifu'.
+Tente "rm --help" para mais informações.
+```
+Neste caso o `--` significa fim das opcoes
+```
+diurno@tux06:~/shell$ rm -i -- -sifu
+rm: remover arquivo comum vazio '-sifu'? sim
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ seq -s* 6
+1*2*3*4*5*6
+diurno@tux06:~/shell$
 ```
 
 
+## `cat`
+Neste caso o `-` e um placeholder para a entrada primaria
+```
+diurno@tux06:~/shell$ echo -e 'impar\tpar\n=====\t===' | cat - nums
+impar	par
+=====	===
+1	2
+3	4
+5	6
+7	8
+9	10
+diurno@tux06:~/shell$ ^C
+diurno@tux06:~/shell$ 
+```
+
+## `tr`
+tr - translate or delete characters
+```
+diurno@tux06:~/shell$ tr A-Z a-z < quequeisso
+atencao, o texto abaixo nao eh treinamento,
+eh uma lavagem cerebral!!!
+o shell alem de analisar cada dado entrado a partir do prompt do unix,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+interpretador de comandos;
+controle do ambiente unix;
+redirecionamento de entrada e saida;
+substituicao de nomes de arquivos;
+concatenacao de pipe;
+execucao de programas;
+poderosa linguagem de programacao.
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ tr AEIOU xyz < quequeisso
+xTyNCxz, z TyXTz xBxzXz Nxz yH TRyzNxMyNTz,
+yH zMx LxVxGyM CyRyBRxL!!!
+z Shell alem de analisar cada dado entrado a partir do prompt do zNzX,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+znterpretador de comandos;
+Controle do ambiente zNzX;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+yxecucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ 
+```
+```
+diurno@tux06:~/shell$ tr '[:lower:]' '[:upper:]' <<< ação
+AçãO
+diurno@tux06:~/shell$
+```
+
+## `tr -s`
+-s, --squeeze-repeats   substitui cada sequência de um caractere repetido
+                            que está listado no último CONJUNTO especificado,
+                            com uma única ocorrência daquele caractere
+```
+diurno@tux06:~/shell$ ls -l
+total 4424
+-rwxr-xr-x 1 diurno diurno    1831 ago  6 23:34 acpi-note.yad
+-rwxr-xr-x 1 diurno diurno     114 out  7  1997 add
+-rwxr-xr-x 1 diurno diurno      13 jun 17  2013 alfa
+-rwxr-xr-x 1 diurno diurno      83 jun 15  2013 aluado
+-rwxr-xr-x 1 diurno diurno     737 jan 16  2010 anilhas.sh
+-rwxr-xr-x 1 diurno diurno     621 dez 31  2009 animal.sh
+-rwxr-xr-x 1 diurno diurno     127 set 25  2017 aniv
+
+diurno@tux06:~/shell$ ls -l | tr -s ' '
+total 4424
+-rwxr-xr-x 1 diurno diurno 1831 ago 6 23:34 acpi-note.yad
+-rwxr-xr-x 1 diurno diurno 114 out 7 1997 add
+-rwxr-xr-x 1 diurno diurno 13 jun 17 2013 alfa
+-rwxr-xr-x 1 diurno diurno 83 jun 15 2013 aluado
+
+diurno@tux06:~/shell$ ls -l | tr -s ' ' '\t' | cut -f5,9
+
+1831	acpi-note.yad
+114	add
+13	alfa
+83	aluado
+737	anilhas.sh
+
+
+diurno@tux06:~/shell$ ls -l | tr -s ' ' '\t' | cut -f5,9 | sort -rn
+1883200	RegExpNew.pdf
+1560738	OneLiners.pdf
+461755	Canivete_Suíço_do_Shell.pdf
+9673	velha.sh
+6595	rotinas.sh
+4237	ArteAscii2.sh
+4168	AnoNovo.sh
+4096	nautilus-scripts
+4096	lixo
+
+```
+
+### `tr -d`
+-d, --delete            apaga os caracteres do CONJUNTO1, não traduz
+
+```
+diurno@tux06:~/shell$ tr -d '\r' < DOS.txt | cat -et
+Este arquivo$
+foi gerado pelo$
+DOS/rwin e foi$
+baixado por um$
+ftp mal feito.$
+diurno@tux06:~/shell$
+```
+Use o comando `$ tr '\n' ' '` para serializar um arquivo em linhas para uma unica linha.
+
+
+
+### `expr`
+expr - evaluate expressions
+
+
+#### `((  ))` --> operador matematico
+Para prioriza-lo utiliza-se o `$` na frente
+```
+diurno@tux06:~/shell$ expr 3 * 5
+expr: erro de sintaxe: argumento inesperado “acpi-note.yad”
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ expr 3 '*' 5
+15
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ expr 3 '*' 5
+15
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ echo $((3*5))
+15
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ num=8
+diurno@tux06:~/shell$ echo $((num*10))
+80
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ echo $((tudo++))
+0
+diurno@tux06:~/shell$ echo $((tudo++))
+1
+diurno@tux06:~/shell$ echo $((tudo++))
+2
+diurno@tux06:~/shell$ echo $((tudo++))
+3
+diurno@tux06:~/shell$ echo $((tudo++))
+4
+diurno@tux06:~/shell$ echo $((tudo++))
+5
+diurno@tux06:~/shell$ echo $((tudo++))
+diurno@tux06:~/shell$ echo $((tudo+=3))
+9
+diurno@tux06:~/shell$ echo $((tudo+=3))
+12
+diurno@tux06:~/shell$ echo $((tudo+=3))
+15
+diurno@tux06:~/shell$ 
+```
+Trabalhando com bases
+```
+diurno@tux06:~/shell$ echo $((2**3))
+8
+diurno@tux06:~/shell$ echo $((2#1011))
+11
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ echo $((2#1011+8#13+10#11+11#10+16#b))
+55
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ dia=08
+diurno@tux06:~/shell$ echo $((dia+1))
+bash: 08: valor muito grande para esta base de numeração (token de erro é "08")
+diurno@tux06:~/shell$ echo $((10#dia+1))
+bash: 10#dia: valor muito grande para esta base de numeração (token de erro é "10#dia")
+diurno@tux06:~/shell$ echo $((10#$dia+1))
+9
+diurno@tux06:~/shell$ 
+
+```
+
+#### Comparando `(( ))` com `expr`
+```
+diurno@tux06:~/shell$ time for ((i=1;i<200;i++))
+> {
+> expr 2 + 2 > /dev/null
+> }
+
+real	0m0,232s
+user	0m0,166s
+sys	0m0,080s
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ time for ((i=1;i<200;i++)); { echo $((2+2)) > /dev/null; } 
+real	0m0,006s
+user	0m0,006s
+sys	0m0,000s
+diurno@tux06:~/shell$ 
+
+```
+
+### `for`
+Consultar `$man bash` e buscar por `/ for \(\(`.
+```
+diurno@tux06:~/shell$ for ((i=10;i>0;i--))
+> {
+> echo $i
+> }
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ for ((i=10;i>0;i-=2)); { echo $i; }
+10
+8
+6
+4
+2
+diurno@tux06:~/shell$
+```
+
+
+### Operador ternario
+```
+diurno@tux06:~/shell$ num=40
+diurno@tux06:~/shell$ num=$((num>50?num-40:num+40));echo $num
+80
+diurno@tux06:~/shell$ num=$((num>50?num-40:num+40));echo $num
+40
+diurno@tux06:~/shell$ num=$((num>50?num-40:num+40));echo $num
+80
+diurno@tux06:~/shell$ 
+```
+
+## `for` outra sintaxe
+```
+diurno@tux06:~/shell$ mai=
+diurno@tux06:~/shell$ for num in 2 5 4 7
+> do
+> mai=$((mai>num?mai:num))
+> echo -e "mai = $mai\tnum = $num"
+> done
+mai = 2	num = 2
+mai = 5	num = 5
+mai = 5	num = 4
+mai = 7	num = 7
+diurno@tux06:~/shell$
+```
