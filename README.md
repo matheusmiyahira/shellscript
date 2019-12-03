@@ -1,6 +1,12 @@
 # shellscript
 Treinamento Shell Script na 4 Linux com _**Julio Cezar Neves**_
 
+# Aula 1 - 02/Dez/2019
+
+## Novos Comandos
+Bash `Ctr+R` --> (reverse-i-search)
+
+
 ## Preparando para a Aula
 mkdir /home/diurno/shell \
 tar xzvf /home/repositorio/EXTRAS/404/ArqsDoCursoShell /home/diurno/shell
@@ -555,11 +561,6 @@ diurno@tux06:~/shell/lixo$
 
 
 ## Expressao Regurar
-grep --> global regular expression print \
-grep -E --> grep para expressoes regulares expandidas (ex. ?, {}, etc)
-grep -v palavra --> exclui palavra
-grep -v ^$ --> exclui linha em branco, que comeca e termina
-grep -o --> --only-match
 
 ### Classe POSIX
 ```
@@ -693,10 +694,602 @@ diurno@tux06:~/shell/lixo$
 
 
 
-## Novos Comandos
-Bash `Ctr+R` --> (reverse-i-search)
+# Aula 2 - 03/Dez/2019
+
+## **`grep`**
+grep  searches  for PATTERNS in each FILE.  PATTERNS is one or patterns
+       separated by newline characters, and grep prints each line that matches
+       a pattern.
+       
+       
+grep --> global regular expression print \
+grep -E --> grep para expressoes regulares expandidas (ex. ?, {}, etc) \
+grep -v palavra --> exclui palavra \
+grep -v ^$ --> exclui linha em branco, que comeca e termina \
+grep -o --> --only-match \
+grep -f -->  \
+
+> Todo comando do shell se estrutura **instrucao + opcao + comando + arquivos**
+
+### `grep -i` 
+grep -i --> ignore case sensitive
+```
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ cat telefones
+Ciro Grippi	(021)555-1234
+Claudia Marcia	(021)555-2112
+Enio Cardoso	(023)232-3423
+Juliana Duarte	(024)622-2876
+Luiz Carlos	(021)767-2124
+Ney Garrafas	(021)988-3398
+Ney Gerhardt	(024)543-4321
+Paula Duarte	(011)449-0219
+diurno@tux06:~/shell$ grep ney telefones
+diurno@tux06:~/shell$ grep -i ney telefones
+Ney Garrafas	(021)988-3398
+Ney Gerhardt	(024)543-4321
+```
+
+### `grep -c` **CUIDADO**
+Conta linha e nao arquivos 
+```
+diurno@tux06:~/shell$ grep -C ' de ' quequeisso
+grep:  de : argumento inválido para comprimento do contexto
+diurno@tux06:~/shell$ grep -c ' de ' quequeisso
+7
+diurno@tux06:~/shell$ grep -o ' de ' quequeisso
+ de 
+ de 
+ de 
+ de 
+ de 
+ de 
+ de 
+ de 
+diurno@tux06:~/shell$ grep -o ' de ' quequeisso | wc -l
+8
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ grep -c a <<< abacate
+1
+diurno@tux06:~/shell$ grep -o a <<< abacate | wc -l
+3
+diurno@tux06:~/shell$ 
+```
+
+### `grep -A`
+Busca e inclui linhas apos a busca
+```
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ grep -A2 Luiz telefones
+Luiz Carlos	(021)767-2124
+Ney Garrafas	(021)988-3398
+Ney Gerhardt	(024)543-4321
+diurno@tux06:~/shell$ 
+```
+
+### `grep -q`
+??????
 
 
+### `grep -l`
+-l, --files-with-matches
+              Suppress normal output; instead print the  name  of  each  input
+              file  from  which  output would normally have been printed.  The
+              scanning will stop on the first match.
 
+```
+diurno@tux06:~/shell$ grep date *
+ArteAscii1.sh:Ano=$[$(date +%j)>365/2?$(date +%Y)+1:$(date +%Y)]
+c3e3:Data=`date "+%b %e"`
+c4e1:hh=`date "+%H"`      #  Horas em hh
+c4e1:mm=`date "+%M"`      #  Minutos em mm
+c4e3:Hora=`date +%H`
+confusao:cd $HOME;pwd;date;ls -la;echo $LOGNAME x${SHELL}x
+hora:Hora=`date | cut -f4 -d" " | cut -f1 -d:`
+hora:Resto=`date | cut -f4 -d" " | cut -f2- -d:`
+grep: lixo: É um diretório
+NatalComNeve.sh:Ano=$(($(date +%m) < 10 ? $(date +%Y) : $(date +%Y) + 1))
+natal.sh:echo "E UM PROSPERO $((($(date +%Y)+1)))"
+grep: nautilus-scripts: É um diretório
+reldig.sh:    HrAtu=$(date +%H%M%S)
+rotinas.sh:    DFim=`date +%d`
+rotinas.sh:    MFim=`date +%m`
+rotinas.sh:    AFim=`date +%Y`
+velha.sh:	Seg=`date "+%S"`
+diurno@tux06:~/shell$ grep -l date *
+ArteAscii1.sh
+c3e3
+c4e1
+c4e3
+confusao
+hora
+grep: lixo: É um diretório
+NatalComNeve.sh
+natal.sh
+grep: nautilus-scripts: É um diretório
+reldig.sh
+rotinas.sh
+velha.sh
+diurno@tux06:~/shell$ 
+
+```
+
+### `grep -vf`
+
+-v, --invert-match
+              Invert the sense of matching, to select non-matching lines.
+
+-f FILE, --file=FILE
+              Obtain patterns from FILE, one per line.  If this option is used
+              multiple times or is combined with  the  -e  (--regexp)  option,
+              search  for  all  patterns  given.  The empty file contains zero
+              patterns, and therefore matches nothing.
+
+```
+diurno@tux06:~/shell$ ip a | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}'
+127.0.0.1
+192.168.203.6
+192.168.203.255
+diurno@tux06:~/shell$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: enp3s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:1a:64:1f:5e:e6 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.203.6/24 brd 192.168.203.255 scope global dynamic enp3s0
+       valid_lft 4121sec preferred_lft 4121sec
+    inet6 fe80::21a:64ff:fe1f:5ee6/64 scope link 
+       valid_lft forever preferred_lft forever
+diurno@tux06:~/shell$ ip a | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' > arqip
+diurno@tux06:~/shell$ sed 's/^/\b/; s/$/\b/' arqip
+b127.0.0.1b
+b192.168.203.6b
+b192.168.203.255b
+diurno@tux06:~/shell$ sed 's/^/\\b/; s/$/\\b/' arqip
+\b127.0.0.1\b
+\b192.168.203.6\b
+\b192.168.203.255\b
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ sed 's/^/\\b/; s/$/\\b/' arqip > arqip1
+arqip1
+diurno@tux06:~/shell$ cat arqip1
+\b127.0.0.1\b
+\b192.168.203.6\b
+\b192.168.203.255\b
+diurno@tux06:~/shell$ 
+```
+
+
+---
+
+## **`sed`**
+Sed  is a stream editor.  A stream editor is used to perform basic text
+       transformations on an input stream (a file or input from  a  pipeline).
+       While  in  some  ways similar to an editor which permits scripted edits
+       (such as ed), sed works by making only one pass over the input(s),  and
+       is consequently more efficient.  But it is sed's ability to filter text
+       in a pipeline which particularly distinguishes it from other  types  of
+       editors.
+       
+### `sed '/ / , / /d '`
+```
+diurno@tux06:~/shell$ seq 20
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+diurno@tux06:~/shell$ seq 2 20
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+diurno@tux06:~/shell$ seq 2 2 20
+2
+4
+6
+8
+10
+12
+14
+16
+18
+20
+diurno@tux06:~/shell$ man sed
+diurno@tux06:~/shell$ seq 2 2 20 | sed '2,4p'
+2
+4
+4
+6
+6
+8
+8
+10
+12
+14
+16
+18
+20
+diurno@tux06:~/shell$ seq 2 2 20 | sed -n '2,4p'
+4
+6
+8
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ seq 2 2 20 | sed -n '2,4p'
+4
+6
+8
+```
+Evite usar o -n com o p
+```
+diurno@tux06:~/shell$ seq 2 2 20 | sed -n '2,4p;s/4/x/p'
+4
+x
+6
+8
+1x
+diurno@tux06:~/shell$
+
+```
+Use o !d ao inves
+```
+diurno@tux06:~/shell$ seq 2 2 20 | sed '2,4!d;s/4/x/'
+x
+6
+8
+diurno@tux06:~/shell$
+```
+```
+diurno@tux06:~/shell$ seq 2 2 20 | sed '/^2$/,/4/d'
+6
+8
+10
+12
+14
+16
+18
+20
+diurno@tux06:~/shell$ seq 2 2 20 | sed '/2$/,/4/d'
+6
+8
+10
+16
+18
+20
+diurno@tux06:~/shell$
+```
+
+#### Deletando `sed '/de/,/ate/d' file`
+```
+diurno@tux06:~/shell$ cat -n quequeisso
+     1	ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+     2	EH UMA LAVAGEM CEREBRAL!!!
+     3	O Shell alem de analisar cada dado entrado a partir do prompt do UNIX,
+     4	interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+     5	Interpretador de comandos;
+     6	Controle do ambiente UNIX;
+     7	Redirecionamento de entrada e saida;
+     8	Substituicao de nomes de arquivos;
+     9	Concatenacao de pipe;
+    10	Execucao de programas;
+    11	Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ sed '/ de /,/UNIX/d'
+^C
+diurno@tux06:~/shell$ sed '/UNIX/,/ de /d' quequeisso 
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ sed '/ de /,/I/d' quequeisso 
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+Controle do ambiente UNIX;
+diurno@tux06:~/shell$ 
+```
+
+### `sed 'a'` ou `sed '/ /a'` append
+Inseri apos a linha
+```
+diurno@tux06:~/shell$ seq 2 2 20 | sed '2aNovo'
+2
+4
+Novo
+6
+8
+10
+12
+14
+16
+18
+20
+diurno@tux06:~/shell$
+```
+### `sed '/ /c'` ou `sed '/ /c'` change a linha existente
+```
+diurno@tux06:~/shell$ seq 2 2 20 | sed '2cNovo'
+2
+Novo
+6
+8
+10
+12
+14
+16
+18
+20
+diurno@tux06:~/shell$
+```
+### `sed '/ /i'` ou `sed '/ /i'` insere uma linha nova
+Inseri na linha
+```
+diurno@tux06:~/shell$ seq 2 2 20 | sed '2iNovo'
+2
+Novo
+4
+6
+8
+10
+12
+14
+16
+18
+20
+diurno@tux06:~/shell$
+```
+### `sed 's/ / /I'` ou `sed 's/ / /i'` --> substituir com `I` ignora o case sensitive.
+```
+diurno@tux06:~/shell$ sed 's/unix/LINUX/' quequeisso
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+O Shell alem de analisar cada dado entrado a partir do prompt do UNIX,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+Interpretador de comandos;
+Controle do ambiente UNIX;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ sed 's/unix/LINUX/i' quequeisso
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+O Shell alem de analisar cada dado entrado a partir do prompt do LINUX,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+Interpretador de comandos;
+Controle do ambiente LINUX;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$
+```
+
+### `sed 's/ / /g'` --> substituir todas.
+```
+diurno@tux06:~/shell$ sed 's/a/X/' <<< abracadabra
+Xbracadabra
+diurno@tux06:~/shell$ sed 's/a/X/5' <<< abracadabra
+abracadabrX
+diurno@tux06:~/shell$ sed 's/a/X/g' <<< abracadabra
+XbrXcXdXbrX
+diurno@tux06:~/shell$ sed 's/a/X/2g' <<< abracadabra
+abrXcXdXbrX
+diurno@tux06:~/shell$ 
+```
+
+### `sed 's/ .*//'` --> substituir todas que comecam com branco por nada.
+```
+diurno@tux06:~/shell$ sed 's/ .*//' quequeisso
+ATENCAO,
+EH
+O
+interfaceando
+Interpretador
+Controle
+Redirecionamento
+Substituicao
+Concatenacao
+Execucao
+Poderosa
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ cat quequeisso
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+O Shell alem de analisar cada dado entrado a partir do prompt do UNIX,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+Interpretador de comandos;
+Controle do ambiente UNIX;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ 
+```
+
+### `sed 's/ .*//'` --> manipular case.
+```
+diurno@tux06:~/shell$ sed -r 's/\b([[:alpha:]]+)\b/\L\u\1/g' <<< BOTELHO\ PINTO
+Botelho Pinto
+diurno@tux06:~/shell$ 
+```
+
+
+### `sed 's/x //'`, `'s/d //'`, `'s/o .*//'`, `'s/c //'` --> base numericas
+> consulte a tabela ASCII com `man ascii`
+``` 
+diurno@tux06:~/shell$ cat -et DOS.txt
+Este arquivo^M$
+foi gerado pelo^M$
+DOS/rwin e foi^M$
+baixado por um^M$
+ftp mal feito.^M$
+diurno@tux06:~/shell$ sed 's/\x0d//' DOS.txt | cat -et
+Este arquivo$
+foi gerado pelo$
+DOS/rwin e foi$
+baixado por um$
+ftp mal feito.$
+diurno@tux06:~/shell$ sed 's/\d13//' DOS.txt | cat -et
+Este arquivo$
+foi gerado pelo$
+DOS/rwin e foi$
+baixado por um$
+ftp mal feito.$
+diurno@tux06:~/shell$ sed 's/\o15//' DOS.txt | cat -et
+Este arquivo$
+foi gerado pelo$
+DOS/rwin e foi$
+baixado por um$
+ftp mal feito.$
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ sed 's/\cM//' DOS.txt | cat -et
+Este arquivo$
+foi gerado pelo$
+DOS/rwin e foi$
+baixado por um$
+ftp mal feito.$
+diurno@tux06:~/shell$ 
+```
+
+### `sed '//=' arquivo` --> buscando valores no arquivo
+``` 
+diurno@tux06:~/shell$ sed = quequeisso
+1
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+2
+EH UMA LAVAGEM CEREBRAL!!!
+3
+O Shell alem de analisar cada dado entrado a partir do prompt do UNIX,
+4
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+5
+Interpretador de comandos;
+6
+Controle do ambiente UNIX;
+7
+Redirecionamento de entrada e saida;
+8
+Substituicao de nomes de arquivos;
+9
+Concatenacao de pipe;
+10
+Execucao de programas;
+11
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ sed '/UNIX/=' quequeisso
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+3
+O Shell alem de analisar cada dado entrado a partir do prompt do UNIX,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+Interpretador de comandos;
+6
+Controle do ambiente UNIX;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ sed -n '/UNIX/=' quequeisso
+3
+6
+diurno@tux06:~/shell$ sed -n '$=' quequeisso
+11
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ sed '/5,$/=' quequeisso
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+O Shell alem de analisar cada dado entrado a partir do prompt do UNIX,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+Interpretador de comandos;
+Controle do ambiente UNIX;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ 
+
+```
+
+### `sed 'N;s//' arquivo` --> 
+```
+diurno@tux06:~/shell$ seq 8 | sed 'N;p'
+1
+2
+1
+2
+3
+4
+3
+4
+5
+6
+5
+6
+7
+8
+7
+8
+diurno@tux06:~/shell$ seq 8 | sed 'N;s/\n/\t/'
+1	2
+3	4
+5	6
+7	8
+diurno@tux06:~/shell$ sed = frutas | sed 'N;s/\n/\t/'
+1	abacate
+2	maçã
+3	morango
+4	pera
+5	tangerina
+6	uva
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ paste <(seq 6) frutas
+1	abacate
+2	maçã
+3	morango
+4	pera
+5	tangerina
+6	uva
+diurno@tux06:~/shell$ 
+```
 
 
