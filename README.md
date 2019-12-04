@@ -572,7 +572,7 @@ o
 diurno@tux06:~/shell/lixo$ grep -o '[a-z]' <<< ação
 a
 ç
-ã
+ã   
 o
 diurno@tux06:~/shell/lixo$ echo $LANG
 pt_BR.UTF-8
@@ -2093,11 +2093,7 @@ Use o comando `$ tr '\n' ' '` para serializar um arquivo em linhas para uma unic
 
 
 
-### `expr`
-expr - evaluate expressions
-
-
-#### `((  ))` --> operador matematico
+### `((  ))` --> operador matematico
 Para prioriza-lo utiliza-se o `$` na frente
 ```
 diurno@tux06:~/shell$ expr 3 * 5
@@ -2159,7 +2155,7 @@ diurno@tux06:~/shell$
 
 ```
 
-#### Comparando `(( ))` com `expr`
+### Comparando `(( ))` com `expr`
 ```
 diurno@tux06:~/shell$ time for ((i=1;i<200;i++))
 > {
@@ -2232,3 +2228,707 @@ mai = 5	num = 4
 mai = 7	num = 7
 diurno@tux06:~/shell$
 ```
+
+
+# Aula 3 - 04/Dez/2019
+
+## `set`
+${ } --> expansao de parametro
+```
+diurno@tux06:~$ set {a..k}
+diurno@tux06:~$ echo $1
+a
+diurno@tux06:~$ echo $2
+b
+diurno@tux06:~$ echo $3
+c
+diurno@tux06:~$ echo $10
+a0
+diurno@tux06:~$ echo ${10}
+j
+diurno@tux06:~$ 
+diurno@tux06:~$ echo $0
+/bin/bash
+diurno@tux06:~$ 
+```
+
+
+### `expr`
+expr - evaluate expressions
+```
+diurno@tux06:~$ var=cadeia
+diurno@tux06:~$ expr length $var
+6
+diurno@tux06:~$ echo ${#var}
+6
+diurno@tux06:~$ wc -c <<< $var
+7
+diurno@tux06:~$ echo -n $var | wc -c
+6
+diurno@tux06:~$ var=ação
+diurno@tux06:~$ echo ${#var}
+4
+diurno@tux06:~$ echo -n $var | wc -c
+6
+diurno@tux06:~$ echo -n $var | wc -m
+4
+diurno@tux06:~$ 
+diurno@tux06:~/shell$ var=cadeia
+diurno@tux06:~/shell$ expr substr $var 3 3
+dei
+diurno@tux06:~/shell$ echo ${var:2:3}
+dei
+diurno@tux06:~/shell$ echo ${var:2}
+deia
+diurno@tux06:~/shell$ echo ${var:2:1}
+d
+diurno@tux06:~/shell$ echo ${var:2:2}
+de
+diurno@tux06:~/shell$ echo ${var:2:-1}
+dei
+diurno@tux06:~/shell$ echo ${var:2:-2}
+de
+diurno@tux06:~/shell$ echo ${var:2:(-2)}
+de
+diurno@tux06:~/shell$ echo ${var:2:(-1)}
+dei
+diurno@tux06:~/shell$
+```
+> Como visto acima, cuidado com o **`wc`**
+
+> Dica `wc`para lista maior linha do arquivo
+```shell
+diurno@tux06:~/shell$ wc -L quequeisso
+70 quequeisso
+diurno@tux06:~/shell$ 
+```
+
+### `expr index`
+```shell
+diurno@tux06:~/shell$ expr index 123456 5
+5
+diurno@tux06:~/shell$ expr index 123456 46
+4
+diurno@tux06:~/shell$ expr index 123456 64
+4
+diurno@tux06:~/shell$ 
+```
+
+> Dica: colocando o ./ no PATH usando `echo 'PATH=$PATH:.'>>~/.bashrc`
+> Este comando se aplicara no proximo login. Para validar agora `source ~/bashrc` 
+
+## Passagem de parametros
+```shell
+diurno@tux06:~/shell$ cat param1
+echo $1
+echo $2
+echo $11
+diurno@tux06:~/shell$ param1 {a..k}
+a
+b
+a1
+diurno@tux06:~/shell$ cat param2
+echo $0
+echo $2
+echo ${11}
+diurno@tux06:~/shell$ param2 {a..k}
+./param2
+b
+k
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ cat param3
+echo O programa $0 Recebeu $# Parametros
+echo $1
+echo $2
+echo ${11}
+diurno@tux06:~/shell$ param3
+O programa ./param3 Recebeu 0 Parametros
+
+
+
+diurno@tux06:~/shell$ param3 {a..z}
+O programa ./param3 Recebeu 26 Parametros
+a
+b
+k
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ cat param4
+echo O Programa $0 Recebeu $# Parametros Listados Abaixo:
+echo $*
+diurno@tux06:~/shell$ param4 {a..k}
+O Programa ./param4 Recebeu 11 Parametros Listados Abaixo:
+a b c d e f g h i j k
+diurno@tux06:~/shell$
+```
+
+> Dica: para criar arquivos use `>` ao inves de ~~`touch`~~. ex. `> arquivo`
+
+
+## `find`
+find - search for files in a directory hierarchy
+SYNOPSIS Basica --> find [starting-point...] [arg. pesq] [acao]
+
+Importante
+- sempre recursivo
+- `-type f` ou `-type d` --> file ou directory
+- `-name` ou `-iname`
+- `-size 1000c` --> contagem de blocos de 512k (c=caracteres, k=1000, K=1024, ...)
+- `-a` `-c` `-m` `time` --> time a=acessado, c=creation, m=modification do arquivo
+- `grep -l` --> listar sem as sugeiras
+
+
+```
+diurno@tux06:~/shell/lixo$ touch {a..f}
+diurno@tux06:~/shell/lixo$ cd -
+/home/diurno/shell
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ find . -name ?
+./d
+./lixo/d
+diurno@tux06:~/shell$ find . -name \?
+.
+./d
+./lixo/e
+./lixo/a
+./lixo/c
+./lixo/b
+./lixo/d
+./lixo/f
+diurno@tux06:~/shell$ 
+```
+```
+diurno@tux06:~/shell$ find . -type f | wc -l
+290
+diurno@tux06:~/shell$ find . | wc -l
+304
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ ls | wc -l
+151
+diurno@tux06:~/shell$ ls -a | wc -l
+153
+diurno@tux06:~/shell$ find . -type d | wc -l
+14
+diurno@tux06:~/shell$ 
+```
+```
+diurno@tux06:~/shell$ find . -type d
+.
+./nautilus-scripts
+./nautilus-scripts/RootScripts
+./nautilus-scripts/TratamentoImagem
+./nautilus-scripts/Varios
+./nautilus-scripts/Varios/FileInfo
+./nautilus-scripts/Varios/SystemConfiguration
+./nautilus-scripts/Varios/FileProcessing
+./nautilus-scripts/Varios/FileSystemManagement
+./nautilus-scripts/Varios/Archiving
+./nautilus-scripts/Varios/Execute
+./nautilus-scripts/Varios/Obsolete
+./nautilus-scripts/Varios/Multimedia
+./lixo
+diurno@tux06:~/shell$ 
+```
+
+
+
+
+## `xargs`
+- tudo o que recebe na entrada primaria ele botara atras do outro
+- importa para o seu proprio shell
+rm nao recebe dados da entrada primaria
+```
+diurno@tux06:~/shell$ cd lixo
+diurno@tux06:~/shell/lixo$ > arq
+diurno@tux06:~/shell/lixo$ alias rm=rm\ -i
+diurno@tux06:~/shell/lixo$ ls | rm
+rm: falta operando
+Tente "rm --help" para mais informações.
+diurno@tux06:~/shell/lixo$ ls | xargs rm
+diurno@tux06:~/shell/lixo$ 
+```
+```
+diurno@tux06:~/shell$ seq 20 | xargs echo linha
+linha 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+diurno@tux06:~/shell$ seq 20 | xargs -n1 echo linha
+linha 1
+linha 2
+linha 3
+linha 4
+linha 5
+linha 6
+linha 7
+linha 8
+linha 9
+linha 10
+linha 11
+linha 12
+linha 13
+linha 14
+linha 15
+linha 16
+linha 17
+linha 18
+linha 19
+linha 20
+diurno@tux06:~/shell$ seq 20 | xargs -n1 echo linha > tst
+diurno@tux06:~/shell$ cat tst | xargs -n1
+linha
+1
+linha
+2
+linha
+3
+linha
+4
+linha
+5
+linha
+6
+linha
+7
+linha
+8
+linha
+9
+linha
+10
+linha
+11
+linha
+12
+linha
+13
+linha
+14
+linha
+15
+linha
+16
+linha
+17
+linha
+18
+linha
+19
+linha
+20
+diurno@tux06:~/shell$ cat tst | xargs -L2
+linha 1 linha 2
+linha 3 linha 4
+linha 5 linha 6
+linha 7 linha 8
+linha 9 linha 10
+linha 11 linha 12
+linha 13 linha 14
+linha 15 linha 16
+linha 17 linha 18
+linha 19 linha 20
+diurno@tux06:~/shell$
+```
+```
+diurno@tux06:~/shell$ cd lixo/
+diurno@tux06:~/shell/lixo$ ls
+ a   arq   b   c   d   e   f  'nome ruim'
+diurno@tux06:~/shell/lixo$ rm -f *
+diurno@tux06:~/shell/lixo$ ls
+diurno@tux06:~/shell/lixo$ touch arq{a..e}.{ok,err}
+diurno@tux06:~/shell/lixo$ ls
+arqa.err  arqb.err  arqc.err  arqd.err  arqe.err
+arqa.ok   arqb.ok   arqc.ok   arqd.ok   arqe.ok
+diurno@tux06:~/shell/lixo$ rm -f *
+diurno@tux06:~/shell/lixo$ eval \>arp{a..e}.{ok,err}
+diurno@tux06:~/shell/lixo$ ls
+arpa.err  arpb.err  arpc.err  arpd.err  arpe.err
+arpa.ok   arpb.ok   arpc.ok   arpd.ok   arpe.ok
+diurno@tux06:~/shell/lixo$ ls | xargs -L2
+arpa.err arpa.ok
+arpb.err arpb.ok
+arpc.err arpc.ok
+arpd.err arpd.ok
+arpe.err arpe.ok
+diurno@tux06:~/shell/lixo$ ls | xargs -L2 diff
+diurno@tux06:~/shell/lixo$ echo x > arqa.ok
+diurno@tux06:~/shell/lixo$ ls | xargs -L2 diff
+diff: faltando operando após "arqa.ok"
+diff: Tente "diff --help" para mais informações.
+diurno@tux06:~/shell/lixo$ ls | xargs -tL2 diff
+diff arpa.err arpa.ok 
+diff arpb.err arpb.ok 
+diff arpc.err arpc.ok 
+diff arpd.err arpd.ok 
+diff arpe.err arpe.ok 
+diff arqa.ok 
+diff: faltando operando após "arqa.ok"
+diff: Tente "diff --help" para mais informações.
+diurno@tux06:~/shell/lixo$ 
+```
+
+### `xargs -i`
+```
+diurno@tux06:~/shell/lixo$ mkdir dir
+diurno@tux06:~/shell/lixo$ ls arq?.ok | xargs -i bash -c 'mv {} dir; echo movi {}'
+movi arqa.ok
+diurno@tux06:~/shell/lixo$ ls
+arpa.err  arpb.err  arpc.err  arpd.err  arpe.err  dir
+arpa.ok   arpb.ok   arpc.ok   arpd.ok   arpe.ok
+diurno@tux06:~/shell/lixo$ ls arp?.ok | xargs -i bash -c 'mv {} dir; echo movi {}'
+movi arpa.ok
+movi arpb.ok
+movi arpc.ok
+movi arpd.ok
+movi arpe.ok
+diurno@tux06:~/shell/lixo$ 
+```
+
+
+
+
+## `find` vs `xargs`
+```
+diurno@tux06:~/shell$ find . -type f -exec grep -l date {} \;
+./nautilus-scripts/Varios/FileInfo/Show_MD5_Sum
+./nautilus-scripts/Varios/SystemConfiguration/archiver-config
+./nautilus-scripts/Varios/SystemConfiguration/RPM-tools
+./nautilus-scripts/Varios/SystemConfiguration/RPM-install-update
+./nautilus-scripts/Varios/FileProcessing/pixdir2html.pl
+./nautilus-scripts/Varios/FileProcessing/dos2unix
+./nautilus-scripts/Varios/Archiving/archiver-unarchiver
+./nautilus-scripts/Varios/Execute/root-nautilus-here
+./nautilus-scripts/Varios/Obsolete/RPM-install-update
+./nautilus-scripts/Varios/Multimedia/rotate_jpg_right
+./nautilus-scripts/Varios/Multimedia/mirror_jpg
+./nautilus-scripts/Varios/Multimedia/rotate_jpg_left
+./nautilus-scripts/Varios/Multimedia/rotate
+./nautilus-scripts/Varios/Multimedia/Naudilus
+./c3e3
+./c4e1
+./ArteAscii1.sh
+./velha.sh
+./natal.sh
+./c4e3
+./NatalComNeve.sh
+./reldig.sh
+./confusao
+./rotinas.sh
+./hora
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ find . -type f | xargs grep -l date
+./nautilus-scripts/Varios/FileInfo/Show_MD5_Sum
+./nautilus-scripts/Varios/SystemConfiguration/archiver-config
+./nautilus-scripts/Varios/SystemConfiguration/RPM-tools
+./nautilus-scripts/Varios/SystemConfiguration/RPM-install-update
+./nautilus-scripts/Varios/FileProcessing/pixdir2html.pl
+./nautilus-scripts/Varios/FileProcessing/dos2unix
+./nautilus-scripts/Varios/Archiving/archiver-unarchiver
+./nautilus-scripts/Varios/Execute/root-nautilus-here
+./nautilus-scripts/Varios/Obsolete/RPM-install-update
+./nautilus-scripts/Varios/Multimedia/rotate_jpg_right
+./nautilus-scripts/Varios/Multimedia/mirror_jpg
+./nautilus-scripts/Varios/Multimedia/rotate_jpg_left
+./nautilus-scripts/Varios/Multimedia/rotate
+./nautilus-scripts/Varios/Multimedia/Naudilus
+./c3e3
+./c4e1
+./ArteAscii1.sh
+./velha.sh
+./natal.sh
+./c4e3
+./NatalComNeve.sh
+./reldig.sh
+./confusao
+./rotinas.sh
+./hora
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ find . -type f -exec grep -l date {} +
+./nautilus-scripts/Varios/FileInfo/Show_MD5_Sum
+./nautilus-scripts/Varios/SystemConfiguration/archiver-config
+./nautilus-scripts/Varios/SystemConfiguration/RPM-tools
+./nautilus-scripts/Varios/SystemConfiguration/RPM-install-update
+./nautilus-scripts/Varios/FileProcessing/pixdir2html.pl
+./nautilus-scripts/Varios/FileProcessing/dos2unix
+./nautilus-scripts/Varios/Archiving/archiver-unarchiver
+./nautilus-scripts/Varios/Execute/root-nautilus-here
+./nautilus-scripts/Varios/Obsolete/RPM-install-update
+./nautilus-scripts/Varios/Multimedia/rotate_jpg_right
+./nautilus-scripts/Varios/Multimedia/mirror_jpg
+./nautilus-scripts/Varios/Multimedia/rotate_jpg_left
+./nautilus-scripts/Varios/Multimedia/rotate
+./nautilus-scripts/Varios/Multimedia/Naudilus
+./c3e3
+./c4e1
+./ArteAscii1.sh
+./velha.sh
+./natal.sh
+./c4e3
+./NatalComNeve.sh
+./reldig.sh
+./confusao
+./rotinas.sh
+./hora
+diurno@tux06:~/shell$ 
+```
+
+## `shift 1`
+apaga primeira variavel
+```
+iurno@tux06:~/shell/lixo$ set {a..d}
+diurno@tux06:~/shell/lixo$ echo $1
+a
+diurno@tux06:~/shell/lixo$ echo $#
+4
+diurno@tux06:~/shell/lixo$ 
+diurno@tux06:~/shell/lixo$ shift
+diurno@tux06:~/shell/lixo$ echo $1
+b
+diurno@tux06:~/shell/lixo$ shift 2
+diurno@tux06:~/shell/lixo$ echo $1
+d
+diurno@tux06:~/shell/lixo$ echo $*
+d
+diurno@tux06:~/shell/lixo$ 
+```
+
+
+## `if`
+
+```
+diurno@tux06:~/shell/lixo$ ls xxx
+ls: não foi possível acessar 'xxx': Arquivo ou diretório inexistente
+diurno@tux06:~/shell/lixo$ echo $?
+2
+diurno@tux06:~/shell/lixo$ grep pqp /etc/passwd
+diurno@tux06:~/shell/lixo$ echo $?
+1
+diurno@tux06:~/shell/lixo$ grep root /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+diurno@tux06:~/shell/lixo$ echo $?
+0
+diurno@tux06:~/shell/lixo$ ls add
+ls: não foi possível acessar 'add': Arquivo ou diretório inexistente
+diurno@tux06:~/shell/lixo$ echo $?
+2
+diurno@tux06:~/shell/lixo$ ls ../add
+../add
+diurno@tux06:~/shell/lixo$ echo $?
+0
+diurno@tux06:~/shell/lixo$ 
+```
+
+## SCRIPTS
+
+&& --> then
+|| --> else
+
+### Scritp: verificando usuario no passwd
+```
+diurno@tux06:~/shell/lixo$ if grep -q $1 $2
+> then
+> echo achei
+> else
+> echo nao achei
+> fi
+^C
+nao achei
+diurno@tux06:~/shell/lixo$ set root /etc/passwd
+diurno@tux06:~/shell/lixo$ if grep -q $1 $2; then echo achei; else echo nao achei; fi
+achei
+diurno@tux06:~/shell/lixo$ set balb /etc/passwd
+diurno@tux06:~/shell/lixo$ if grep -q $1 $2; then echo achei; else echo nao achei; fi
+nao achei
+diurno@tux06:~/shell/lixo$ set -o vi
+diurno@tux06:~/shell/lixo$ if grep -q $1 $2; then echo achei; else echo nao achei; fi
+if grep -q $1 $2; then echo achei; else echo nao achei; fi
+nao achei
+diurno@tux06:~/shell/lixo$ set -o emacs
+diurno@tux06:~/shell/lixo$ chmod +x script1
+diurno@tux06:~/shell/lixo$ script1 root /etc/passwd
+achei
+diurno@tux06:~/shell/lixo$ 
+
+```
+> Dica para Salvar script do prompt no arquivo
+> `set -o vi`
+> Esc+k v
+> Salva arquivo
+
+```
+diurno@tux06:~/shell/lixo$ [ 01 = 1 ]; echo $?
+1
+diurno@tux06:~/shell/lixo$ [ 01 -eq 1 ]; echo $?
+0
+diurno@tux06:~/shell/lixo$
+```
+
+
+### Script: criando pasta dir
+Encontre o arquivo `/shell/mmCreateDir`
+
+
+### Script: validando hora
+```
+diurno@tux06:~/shell$ h=15:30
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ if [[ $h == [01][0-9]:[0-5][0-9] || $h == 2[0-3]:[0-5][0-9] ]]
+> then
+> echo hora ok
+> else
+> echo hora nok
+> fi
+hora ok
+diurno@tux06:~/shell$
+iurno@tux06:~/shell$ h=31:80
+diurno@tux06:~/shell$ if [[ $h == [01][0-9]:[0-5][0-9] || $h == 2[0-3]:[0-5][0-9] ]]; then echo hora ok; else echo hora nok; fi
+hora nok
+diurno@tux06:~/shell$
+```
+Refactoring
+```
+diurno@tux06:~/shell$ if [[ $h =~ ([01][0-9]|2[0-3]):[0-5][0-9] ]]; then echo hora ok; else echo hora nok; fi
+hora nok
+diurno@tux06:~/shell$ h=15:30
+diurno@tux06:~/shell$ if [[ $h =~ ([01][0-9]|2[0-3]):[0-5][0-9] ]]; then echo hora ok; else echo hora nok; fi
+hora ok
+diurno@tux06:~/shell$
+```
+Utilizando bordas e retrovisores
+```
+diurno@tux06:~/shell$ h=415:329
+diurno@tux06:~/shell$ if [[ $h =~ ([01][0-9]|2[0-3]):[0-5][0-9] ]]; then echo hora ok; else echo hora nok; fi
+hora ok
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ echo ${BASH_REMATCH[*]}
+15:32 15
+diurno@tux06:~/shell$ if [[ $h =~ ([01][0-9]|2[0-3]):([0-5][0-9]) ]]; then echo hora ok; else echo hora nok; fi
+hora ok
+diurno@tux06:~/shell$ echo ${BASH_REMATCH[*]}
+15:32 15 32
+diurno@tux06:~/shell$ if [[ $h =~ ^([01][0-9]|2[0-3]):([0-5][0-9])$ ]]; then echo hora ok; else echo hora nok; fi
+hora nok
+diurno@tux06:~/shell$ echo ${BASH_REMATCH[*]}
+
+diurno@tux06:~/shell$ h=15:30
+diurno@tux06:~/shell$ if [[ $h =~ ^([01][0-9]|2[0-3]):([0-5][0-9])$ ]]; then echo hora ok; else echo hora nok; fi
+hora ok
+diurno@tux06:~/shell$ echo ${BASH_REMATCH[*]}
+15:30 15 30
+diurno@tux06:~/shell$
+```
+
+### Script: utilizando operacao matematica
+```
+diurno@tux06:~/shell$ var=20
+diurno@tux06:~/shell$ ((var > 10))&& echo maior
+maior
+diurno@tux06:~/shell$
+```
+A operacao `--` diminuira o valor da variavel, parecido com o `for (i--)`.
+```
+diurno@tux06:~/shell$ ((--var > 10))&& echo maior
+maior
+diurno@tux06:~/shell$
+```
+
+### Script: debug de 10 em 10 linhas
+```
+diurno@tux06:~/shell$ for ((i=1;i<100;)); { echo linha $i; ((i++ % 10 == 0)) && read -p "de enter"; }
+linha 1
+linha 2
+linha 3
+linha 4
+linha 5
+linha 6
+linha 7
+linha 8
+linha 9
+linha 10
+de enter
+linha 11
+...
+
+```
+
+### Script: verificando usuario no passwd 2
+Encontre o arquivo `/shell/mmVerificaUsuario`
+```
+diurno@tux06:~/shell$ vim mmVerificaUsuario
+diurno@tux06:~/shell$ chmod +x mmVerificaUsuario 
+diurno@tux06:~/shell$ mmVerificaUsuario root
+root:x:0:0:root:/root:/bin/bash
+diurno@tux06:~/shell$ mmVerificaUsuario mat
+usuaio nao existe
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ echo $?
+8
+diurno@tux06:~/shell$
+```
+
+Logando erros
+```
+diurno@tux06:~/shell$ mmVerificaUsuario fafas >/dev/null
+diurno@tux06:~/shell$ mmVerificaUsuario fafas 2>/dev/null
+usuaio nao existe
+diurno@tux06:~/shell$ echo $1
+balb
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ vi mmVerificaUsuario 
+diurno@tux06:~/shell$ mmVerificaUsuario fafas
+usuaio nao existe
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ mmVerificaUsuario fafas 2>/dev/null
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ cat mmVerificaUsuario
+reg=$(grep "^$1\>" /etc/passwd)||{
+  echo usuaio nao existe >&2
+  exit 8
+}
+echo $reg
+diurno@tux06:~/shell$
+```
+> bacalho 2>> log.err
+
+
+
+## `case`
+Sintaxe:
+  case $var in
+    para1)
+      ______
+      ______;;
+    para1)
+      ______
+      ______;;
+    para1)
+      ______
+      ______      
+  esac
+  
+  
+```
+```
+### Script: case
+Encontre o arquivo `/shell/mmCase`
+
+
+### Exercicio
+
+hora=$(date +%H)
+minuto=$(date +%M)
+
+```
+diurno@tux06:~/shell$ date "+data: %d/%m/%Y%nhora: %H:%M"
+data: 04/12/2019
+hora: 17:49
+diurno@tux06:~/shell$ 
+```
+
+
+
+
+
+
+
