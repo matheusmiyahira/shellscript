@@ -2677,7 +2677,7 @@ iurno@tux06:~/shell/lixo$ set {a..d}
 diurno@tux06:~/shell/lixo$ echo $1
 a
 diurno@tux06:~/shell/lixo$ echo $#
-4
+4diurno@tux06:~/shell$ 
 diurno@tux06:~/shell/lixo$ 
 diurno@tux06:~/shell/lixo$ shift
 diurno@tux06:~/shell/lixo$ echo $1
@@ -3070,6 +3070,7 @@ diurno@tux06:~/shell$ for num in $(cat arq20)
 1 1
 2 2
 3 3
+
 4
 4 5
 5 6
@@ -3141,5 +3142,9 @@ diurno@tux06:~/shell$ od -h <<< "$IFS"
 0000004
 diurno@tux06:~/shell$
 ```
+Resolucao
+Encontre o arquivo `/shell/mmex8`
+Encontre o arquivo `/shell/mmex9`
+
 
 
