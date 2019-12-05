@@ -2927,8 +2927,219 @@ diurno@tux06:~/shell$
 ```
 
 
+# Aula4
+
+## Exercicio 1 pag.252
+h=$(date +%H)
+m=$(date +%M)
+ap=am
+((h>12))&&{
+  let h-=12
+  ap=pm
+}
+echo $h:$m $ap
+
+## Exercicio 2 pag.252
+h=$(date +%H)
+case $h in
+  0[0-9]|1[01]) echo 'bom dia'
+  1[2-7]) echo 'boa tarde'
+  \*) echo 'boa noite'
+esac
 
 
+# `for`
+For processa comparacoes
+## `for ((i=1;i<10;i++))`
+```
+diurno@tux06:~$ for ((i=1;i<10;i++)); { echo $i; }
+1
+2
+3
+4
+5
+6
+7
+8
+9
+diurno@tux06:~$ for ((;i<20;i++)); { echo $i; }
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+diurno@tux06:~$ for ((;i<10;)); { echo $((++i); }
+> 
+> ^C
+diurno@tux06:~$ for ((;i<10;)); { echo $((++i)); }
+diurno@tux06:~$ for ((;i<30;)); { echo $((++i)); }
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+diurno@tux06:~$ for ((;;)); { echo $((++i)); ((i==40)) && break; }
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+diurno@tux06:~$ 
+```
 
+
+## `for arq in *; do echo $arq; done`
+```
+diurno@tux06:~$ for arq in *
+> do
+> echo $((++k)) $arq
+> done
+1 Desktop
+2 Documentos
+3 Downloads
+4 shell
+diurno@tux06:~$
+```
+Convertendo em listas usando o IFS para substituir caracteres por branco
+```
+diurno@tux06:~/shell$ reg=$(grep ^root: /etc/passwd)
+diurno@tux06:~/shell$ echo $reg
+root:x:0:0:root:/root:/bin/bash
+diurno@tux06:~/shell$ ifs=:
+diurno@tux06:~/shell$ IFS=:
+diurno@tux06:~/shell$ echo $reg
+root x 0 0 root /root /bin/bash
+diurno@tux06:~/shell$ for pedaco in $reg
+> {
+> echo $((++x)) $pedaco
+> }
+1 root
+2 x
+3 0
+4 0
+5 root
+6 /root
+7 /bin/bash
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ set $reg
+diurno@tux06:~/shell$ echo $1
+root
+diurno@tux06:~/shell$ echo $2
+x
+diurno@tux06:~/shell$ echo $3
+0
+diurno@tux06:~/shell$
+```
+Para o shell náo ver o IFS, proteja a variavel
+```
+diurno@tux06:~/shell$ echo "$reg"
+root:x:0:0:root:/root:/bin/bash
+diurno@tux06:~/shell$ 
+```
+
+### `for` usando o IFS
+Alterando lingua para um comando. Poderiamos alterar o IFS somente para um comando, geralmente o `read`
+```
+diurno@tux06:~/shell$ LANG=C date
+Thu Dec  5 10:33:57 -03 2019
+diurno@tux06:~/shell$ date
+qui dez  5 10:34:27 -03 2019
+diurno@tux06:~/shell$ 
+```
+```
+diurno@tux06:~/shell$ IFS=-^
+diurno@tux06:~/shell$ for num in $(cat arq20)
+> do
+> echo $((++m)) $num
+> done
+1 1
+2 2
+3 3
+4
+4 5
+5 6
+7
+6 8
+7 9
+diurno@tux06:~/shell$ IFS=-^$'\n'
+diurno@tux06:~/shell$ m=0
+diurno@tux06:~/shell$ for num in $(cat arq20); do echo $((++m)) $num; done
+1 1
+2 2
+3 3
+4 4
+5 5
+6 6
+7 7
+8 8
+9 9
+diurno@tux06:~/shell$ 
+```
+
+
+### `for` sem `in`
+quando voce nao especifica o parametro, o shell utiliza o que voce enviou a ele, atraves do ex.`set $reg`
+```
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ for pedaco
+> do
+> echo $((++w)) $pedaco
+> done
+1 root
+2 x
+3 0
+4 0
+5 root
+6 /root
+7 /bin/bash
+diurno@tux06:~/shell$ 
+```
+
+
+## `while`
+while processa somente intrucoes
+```
+diurno@tux06:~/shell$ while who | grep -q Ciro
+> do
+> sleep 30
+> done; echo O Ciro deu exit. Nao hesite, ligue para ele.
+O Ciro deu exit. Nao hesite, ligue para ele.
+diurno@tux06:~/shell$ 
+
+```
+## `until`
+Oposto do `while`,  
+```
+diurno@tux06:~/shell$ until who | grep -q Ciro; do sleep 30; done; echo O Ciro ta na area.
+diurno@tux06:~/shell$
+```
+
+
+## Exercicio Pag. 273
+
+Fixing IFS
+```
+diurno@tux06:~/shell$ IFS=' '$'\t\n'
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ od -h <<< "$IFS"
+0000000 0920 0a0a
+0000004
+diurno@tux06:~/shell$
+```
 
 
