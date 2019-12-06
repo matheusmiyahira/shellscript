@@ -3399,3 +3399,179 @@ diurno@tux06:~/shell$
 ```
 
 
+## `trap`
+Monitorar sinais: \
+0 - exit \
+2 - Ctrl+C \
+3 - Ctrl+\ \
+15 - Kill \
+
+> Para matar um processo use `kill` ou `kill -15` + numero do processo que pode ser monitorado para dar commit, fechar sessoes com bancos, fechar processos filhos, etc. O `kill -9` nao pode ser monitorado e deixa conexoes abertas e lixo.
+```
+diurno@tux06:~/shell$ trap -l
+ 1) SIGHUP	 2) SIGINT	 3) SIGQUIT	 4) SIGILL	 5) SIGTRAP
+ 6) SIGABRT	 7) SIGBUS	 8) SIGFPE	 9) SIGKILL	10) SIGUSR1
+11) SIGSEGV	12) SIGUSR2	13) SIGPIPE	14) SIGALRM	15) SIGTERM
+16) SIGSTKFLT	17) SIGCHLD	18) SIGCONT	19) SIGSTOP	20) SIGTSTP
+21) SIGTTIN	22) SIGTTOU	23) SIGURG	24) SIGXCPU	25) SIGXFSZ
+26) SIGVTALRM	27) SIGPROF	28) SIGWINCH	29) SIGIO	30) SIGPWR
+31) SIGSYS	34) SIGRTMIN	35) SIGRTMIN+1	36) SIGRTMIN+2	37) SIGRTMIN+3
+38) SIGRTMIN+4	39) SIGRTMIN+5	40) SIGRTMIN+6	41) SIGRTMIN+7	42) SIGRTMIN+8
+43) SIGRTMIN+9	44) SIGRTMIN+10	45) SIGRTMIN+11	46) SIGRTMIN+12	47) SIGRTMIN+13
+48) SIGRTMIN+14	49) SIGRTMIN+15	50) SIGRTMAX-14	51) SIGRTMAX-13	52) SIGRTMAX-12
+53) SIGRTMAX-11	54) SIGRTMAX-10	55) SIGRTMAX-9	56) SIGRTMAX-8	57) SIGRTMAX-7
+58) SIGRTMAX-6	59) SIGRTMAX-5	60) SIGRTMAX-4	61) SIGRTMAX-3	62) SIGRTMAX-2
+63) SIGRTMAX-1	64) SIGRTMAX	
+diurno@tux06:~/shell$
+```
+```
+diurno@tux06:~/shell$ trap "echo recebi ctrl+c" 2
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ ^Crecebi ctrl+c
+diurno@tux06:~/shell$ sleep 10
+^\Sair                                      --> Ctrl\ (panic botton)
+diurno@tux06:~/shell$
+
+```
+Sinal exit = `trap "clear; echo bye bye coisa feita; sleep 10" 0`
+
+Verificando suas entradas
+```
+diurno@tux06:~/shell$ trap -p
+trap -- 'echo recebi ctrl+c' SIGINT
+trap -- 'echo recebi ctrl+\\' SIGQUIT
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ trap
+trap -- 'echo recebi ctrl+c' SIGINT
+trap -- 'echo recebi ctrl+\\' SIGQUIT
+diurno@tux06:~/shell$ 
+```
+
+```
+diurno@tux06:~/shell$ trap "echo morreu" 17
+diurno@tux06:~/shell$ sleep 1&
+[1] 1779
+diurno@tux06:~/shell$ echo $!
+morreu
+1779
+[1]+  Concluído              sleep 1
+diurno@tux06:~/shell$ 
+```
+Removendo configuracao
+```
+diurno@tux06:~/shell$ trap
+trap -- 'echo recebi ctrl+c' SIGINT
+trap -- 'echo recebi ctrl+\\' SIGQUIT
+trap -- 'echo morreu' SIGCHLD
+diurno@tux06:~/shell$ trap 2 3 17
+diurno@tux06:~/shell$ trap
+diurno@tux06:~/shell$
+```
+
+## Funcoes
+
+
+function funcao
+{
+----
+----
+}
+
+ou
+
+function ( )
+{
+----
+local var  --> declarar a variavel como local
+return N
+}
+
+```
+diurno@tux06:~/shell$ var=5
+diurno@tux06:~/shell$ function a
+> {
+> echo $var
+> }
+diurno@tux06:~/shell$ a
+5
+diurno@tux06:~/shell$ function a { local var;echo $var; }
+diurno@tux06:~/shell$ a
+
+diurno@tux06:~/shell$
+```
+
+
+## FIFO
+
+Terminal 1
+```
+diurno@tux06:~/shell$ mkfifo tubo
+diurno@tux06:~/shell$ ls -l tubo
+prw-r--r-- 1 diurno diurno 0 dez  6 13:10 tubo
+diurno@tux06:~/shell$ 
+```
+Terminal 2 - `diurno@tux06:~/shell$ cat tubo`
+Terminal 1 - `diurno@tux06:~/shell$ echo ola > tubo`
+Terminal 2 - `ola`
+
+
+## Substituicao de Processo
+```
+diurno@tux06:~/shell$ var=$(<quequeisso)
+diurno@tux06:~/shell$ echo $var
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO, EH UMA LAVAGEM CEREBRAL!!! O Shell alem de analisar cada dado entrado a partir do prompt do UNIX, interfaceando com os usuarios, tem tambem as seguintes atribuicoes: Interpretador de comandos; Controle do ambiente UNIX; Redirecionamento de entrada e saida; Substituicao de nomes de arquivos; Concatenacao de pipe; Execucao de programas; Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ echo "$var"
+ATENCAO, O TEXTO ABAIXO NAO EH TREINAMENTO,
+EH UMA LAVAGEM CEREBRAL!!!
+O Shell alem de analisar cada dado entrado a partir do prompt do UNIX,
+interfaceando com os usuarios, tem tambem as seguintes atribuicoes:
+Interpretador de comandos;
+Controle do ambiente UNIX;
+Redirecionamento de entrada e saida;
+Substituicao de nomes de arquivos;
+Concatenacao de pipe;
+Execucao de programas;
+Poderosa linguagem de programacao.
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ cat < ls
+bash: ls: Arquivo ou diretório inexistente
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ ls -l >(cat)
+l-wx------ 1 diurno diurno 64 dez  6 13:30 /dev/fd/63 -> 'pipe:[85790]'
+diurno@tux06:~/shell$
+```
+```
+diurno@tux06:~/shell$ par=$(seq 2 2 10)
+diurno@tux06:~/shell$ impar=$(seq 1 2 9)
+diurno@tux06:~/shell$ paste "$par" "$impar"
+paste: '2'$'\n''4'$'\n''6'$'\n''8'$'\n''10': Arquivo ou diretório inexistente
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ man paste
+diurno@tux06:~/shell$ paste <(echo "$impar") <(echo "$par")
+1	2
+3	4
+5	6
+7	8
+9	10
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ while read arq; do echo $((++o)) $arq; done < <(ls)
+1 acpi-note.yad
+2 add
+3 alfa
+4 aluado
+5 anilhas.sh
+6 animal.sh
+7 aniv
+8 AnoNovo.sh
+9 Arq
+10 arq20
+...
+diurno@tux06:~/shell$
+```
+
+
+
+
+
