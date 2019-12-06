@@ -3146,5 +3146,256 @@ Resolucao
 Encontre o arquivo `/shell/mmex8`
 Encontre o arquivo `/shell/mmex9`
 
+## Exercicio em sala
+Encontre o arquivo `/shell/mmListaArq`
+
+
+# Aula 5 - 06/12/2019
+
+## Principais Variaveis do Sistema (pag.330)
+> Programas que o julio desenvolve ficam `/usr/local/bin`. O usr e o bin local do usuario.
+```
+diurno@tux06:~/shell$ cd bin
+bash: cd: bin: Arquivo ou diretório inexistente
+diurno@tux06:~/shell$ CDPATH=/usr/local
+diurno@tux06:~/shell$ cd bin
+/usr/local/bin
+diurno@tux06:/usr/local/bin$
+```
+> PATH= para prcurar programas
+> `CDPATH=.:..:~:/usr/local` para procurar diretorios
+
+## vi avancado
+Dentro do vi
+:read add     --> traz o conteudo do add ao vi
+:!date        --> sai do vi e executa o date
+:r!date       --> adiciona data ao aquivo
+
+
+diurno@tux06:~/shell$ PROMTP_COMMAND='(($?))&& echo cmd errado'
+
+
+
+## Indirecao
+```
+diurno@tux06:~/shell$ a=b
+diurno@tux06:~/shell$ b=3
+diurno@tux06:~/shell$ echo $`echo $a`
+$b
+diurno@tux06:~/shell$ echo ${!a}
+3
+diurno@tux06:~/shell$ set a b c
+diurno@tux06:~/shell$ echo ${!#}
+c
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ for ((i=1;i<$#;i++))
+> do
+> echo parametro $i = ${!i}
+> done
+parametro 1 = a
+parametro 2 = b
+diurno@tux06:~/shell$
+```
+
+## `eval`
+Executa argumentos como um comando de shell.
+```
+diurno@tux06:~/shell$ paipi=\|
+diurno@tux06:~/shell$ ls $paipi wc -l
+ls: não foi possível acessar '|': Arquivo ou diretório inexistente
+ls: não foi possível acessar 'wc': Arquivo ou diretório inexistente
+diurno@tux06:~/shell$ ls | wc -l
+165
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ eval ls $paipi wc -l
+165
+diurno@tux06:~/shell$
+```
+
+## valor default
+```
+diurno@tux06:~/shell$ read -p "login: ($USER): "log;log=${log:-$USER}; echo $log
+login: (diurno): log
+diurno
+diurno@tux06:~/shell$
+```
+
+## economizando ifs
+```
+diurno@tux06:~/shell$ a=20
+diurno@tux06:~/shell$ echo \$a tem $a ${b:+e \$b tem $b}
+$a tem 20
+diurno@tux06:~/shell$ b=10
+diurno@tux06:~/shell$ echo \$a tem $a ${b:+e \$b tem $b}
+$a tem 20 e $ tem 10
+diurno@tux06:~/shell$
+```
+
+## validando variaveis (pag.341)
+```
+diurno@tux06:~/shell$ : ${f?impossivel continuar}
+bash: f: impossivel continuar
+diurno@tux06:~/shell$ : ${a?impossivel continuar}
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ echo ${a?impossivel continuar}
+20
+diurno@tux06:~/shell$
+```
+
+
+## substituindo o `cut -r`
+```
+diurno@tux06:~/shell$ data=07/12/2019
+diurno@tux06:~/shell$ echo ${data#*/}
+12/2019
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ echo ${data##*/}
+2019
+diurno@tux06:~/shell$
+```
+```
+diurno@tux06:~/shell$ data=07/12/2019
+diurno@tux06:~/shell$ echo ${data%%/*}
+07
+diurno@tux06:~/shell$
+```
+
+
+## renomeando arquivos
+```
+diurno@tux06:~/shell$ > b.html
+diurno@tux06:~/shell$ > b.htm
+diurno@tux06:~/shell$ for arq in *.html; do [ -f ${arq%l} ]&& echo ${arq%l} ja existe|| mv $arq S{arq%l}; done
+b.htm ja existe
+diurno@tux06:~/shell$ ls b.htm*
+b.htm  b.html
+diurno@tux06:~/shell$
+```
+
+## substituinfo caracteres
+```
+diurno@tux06:~/shell$ a=abracadabra
+diurno@tux06:~/shell$ echo ${a/a/x}
+xbracadabra
+diurno@tux06:~/shell$ echo ${a//a/x}
+xbrxcxdxbrx
+diurno@tux06:~/shell$ echo ${a//a?/x}
+xrxxxra
+diurno@tux06:~/shell$
+```
+```
+diurno@tux06:~/shell$ var=cadeia
+diurno@tux06:~/shell$ echo ${var^}
+Cadeia
+diurno@tux06:~/shell$ echo ${var^^}
+CADEIA
+diurno@tux06:~/shell$ var=${var^^}; echo $var
+CADEIA
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ echo ${var,}
+cADEIA
+diurno@tux06:~/shell$ echo ${var,,}
+cadeia
+diurno@tux06:~/shell$ echo ${var,}
+cADEIA
+diurno@tux06:~/shell$ echo ${var~}
+cADEIA
+diurno@tux06:~/shell$ echo ${var~~}
+cadeia
+diurno@tux06:~/shell$
+```
+
+## Validacao de resposta
+``` 
+diurno@tux06:~/shell$ read -p 'deseja sair?';[[ ${REPLY^} = [SY] ]]&& echo vou sair
+deseja sair?n
+diurno@tux06:~/shell$ read -p 'deseja sair?';[[ ${REPLY^} = [SY] ]]&& echo vou sair
+deseja sair?y
+vou sair
+diurno@tux06:~/shell$ read -p 'deseja sair?';[[ ${REPLY^} = [SY] ]]&& echo vou sair
+deseja sair?s
+vou sair
+diurno@tux06:~/shell$ 
+```
+
+## Declarando (tipagem)
+```
+diurno@tux06:~/shell$ declare -l var
+diurno@tux06:~/shell$ var=cadeia
+diurno@tux06:~/shell$ var=CADEIA
+diurno@tux06:~/shell$ echo $var
+cadeia
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ declare -u var
+diurno@tux06:~/shell$ var=cadeia
+diurno@tux06:~/shell$ echo $var
+CADEIA
+diurno@tux06:~/shell$
+```
+```
+diurno@tux06:~/shell$ unset num
+diurno@tux06:~/shell$ num=3+4*5
+diurno@tux06:~/shell$ echo $num
+3+4*5
+diurno@tux06:~/shell$ declare -i num
+diurno@tux06:~/shell$ echo $num
+3+4*5
+diurno@tux06:~/shell$ num=3+4*5
+diurno@tux06:~/shell$ echo $num
+23
+diurno@tux06:~/shell$
+```
+
+
+> Para interfaces graficas, o yad melhor que zenet.
+
+
+## Vetor
+```
+diurno@tux06:~/shell$ frutas=(pera uva maca)
+diurno@tux06:~/shell$ echo $frutas
+pera
+diurno@tux06:~/shell$ echo ${frutas[1]}
+uva
+diurno@tux06:~/shell$ echo ${frutas[*]}
+pera uva maca
+diurno@tux06:~/shell$ frutas+=('fruta do conde' 'fruta pao')
+diurno@tux06:~/shell$ echo ${frutas[*]}
+pera uva maca fruta do conde fruta pao
+diurno@tux06:~/shell$
+diurno@tux06:~/shell$ frutas[24]=banana
+diurno@tux06:~/shell$ echo ${frutas[*]}
+pera uva maca fruta do conde fruta pao banana
+diurno@tux06:~/shell$ echo ${frutas[*]:2}
+maca fruta do conde fruta pao banana
+diurno@tux06:~/shell$ echo ${frutas[*]:2:2}
+maca fruta do conde
+diurno@tux06:~/shell$ 
+diurno@tux06:~/shell$ echo ${#frutas}
+4
+diurno@tux06:~/shell$ echo ${frutas[*]}
+pera uva maca fruta do conde fruta pao banana
+diurno@tux06:~/shell$ echo ${#frutas[*]}
+6
+diurno@tux06:~/shell$
+```
+```
+diurno@tux06:~/shell$ declare -A bixo
+diurno@tux06:~/shell$ bixo[cavalo]=agil
+diurno@tux06:~/shell$ bixo[cao]=amigo
+diurno@tux06:~/shell$ echo ${bixo[*]}
+agil amigo
+diurno@tux06:~/shell$ echo ${!bixo[*]}
+cavalo cao
+diurno@tux06:~/shell$ echo ${!bixo[@]}
+cavalo cao
+diurno@tux06:~/shell$ echo ${!frutas[@]}
+0 1 2 3 4 24
+diurno@tux06:~/shell$ echo ${bixo[cavalo]}
+agil
+diurno@tux06:~/shell$ echo ${frutas[24]}
+banana
+diurno@tux06:~/shell$
+```
 
 
